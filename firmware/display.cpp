@@ -39,7 +39,7 @@ void DisplayLib::initR(){
 	tft.fillScreen(0x07E0);
 	tft.setTextColor(0xFFFF);
 	tft.setTextSize(1);
-	return tft;
+
 }
 
 void DisplayLib::printSomething() {
