@@ -14,9 +14,7 @@ class DisplayLib {
 	public:
 		// constructor
 		void initR();
-		// test method
-		void printSomething();
-
+		void drawtext(char *text, uint16_t color);
 	private:
 
 };

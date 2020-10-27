@@ -1,21 +1,22 @@
-#include "Arduino.h"
-#include "Adafruit_GFX.h"
-#include "Adafruit_ST7735.h"
-#include "SPI.h"
-#include "display.h"
+
+#include "OGDisplay.h"
+
+DisplayLib displayLib;
+
+#define TFT_CS   15
+#define TFT_RST  4
+#define TFT_DC   2
+#define TFT_MOSI 23
+#define TFT_SCLK 18
+// not required
+// #define TFT_MISO 12
 
 
-DisplayLib displayLib ;
 
-void setup() {
-	Serial.begin(115200);
+void setup(void) {
 	displayLib.initR();
-
-
 }
 
-
 void loop() {
-	displayLib.printSomething();
-	delay(250);
+
 }

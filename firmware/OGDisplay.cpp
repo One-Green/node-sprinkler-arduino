@@ -2,7 +2,7 @@
 #include "SPI.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ST7735.h"
-#include "display.h"
+#include "OGDisplay.h"
 
 #define TFT_CS   15
 #define TFT_RST  4
@@ -24,39 +24,21 @@ extern uint16_t  Display_Color_Magenta      = 0xF81F;
 extern uint16_t  Display_Color_Yellow       = 0xFFE0;
 extern uint16_t  Display_Color_White        = 0xFFFF;
 
-// declare size of working string buffers. Basic strlen("d hh:mm:ss") = 10
-const size_t    MaxString                  = 16;
-char oldTimeString[MaxString]           = { 0 };
 
 void DisplayLib::initR(){
 
-	// settling time
-	delay(250);
-	tft.enableDisplay(true);
-	tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
-	// initialise the display
-	tft.setFont();
-	tft.fillScreen(0x07E0);
-	tft.setTextColor(0xFFFF);
-	tft.setTextSize(1);
+	tft.initR(INITR_BLACKTAB);
+	tft.fillScreen(ST7735_BLACK);
+	delay(500);
+	// large block of text
+	tft.fillScreen(ST7735_BLACK);
+	drawtext("Screen initialised",ST7735_WHITE);
 
 }
 
-void DisplayLib::printSomething() {
-
-	char newTimeString[MaxString] = { 0 };
-
-	// yes! home the cursor
-	tft.setCursor(0,0);
-
-	// change the text color to the background color
-	tft.setTextColor(0xFFFF);
-
-	sprintf(
-			newTimeString,
-			"this a simple test"
-   );
-	// redraw the old value to erase
-	tft.print(newTimeString);
-	delay(200);
+void DisplayLib::drawtext(char *text, uint16_t color) {
+	tft.setCursor(0, 0);
+	tft.setTextColor(color);
+	tft.setTextWrap(true);
+	tft.print(text);
 }
