@@ -10,3 +10,6 @@ Requirements:
 
 Arduino/C++ Library:
     - https://github.com/adafruit/Adafruit-ST7735-Library/ (Available on Arduino IDE Package manager)
+    - https://github.com/bblanchon/ArduinoJson (Available on Arduino IDE Package manager)
+    - https://github.com/knolleary/pubsubclient (Available on Arduino IDE Package manager)
+    - https://github.com/plapointe6/EspMQTTClient (Available on Arduino IDE Package manager)
