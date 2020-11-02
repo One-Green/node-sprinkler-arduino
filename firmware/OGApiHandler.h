@@ -7,9 +7,10 @@
 
 
 class OGApiHandler {
-	public:
-		String getRegistry(char* api_gateway);
-		bool registerNodeTag(char* nodeTag, char* api_gateway, char* basic_auth, char* basic_pwd);
+public:
+	String getRegistry(char *api_gateway);
+
+	bool registerNodeTag(char *nodeTag, char *api_gateway, char *basic_auth, char *basic_pwd);
 };
 
 

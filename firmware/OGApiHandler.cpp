@@ -8,22 +8,21 @@
 #include "base64.h"
 
 
-String OGApiHandler::getRegistry(char* api_gateway){
+String OGApiHandler::getRegistry(char *api_gateway) {
 
-	if (String(api_gateway).endsWith("/")){
-			return String(api_gateway) + "sprinkler/registry";
-	}
-	else{
+	if (String(api_gateway).endsWith("/")) {
+		return String(api_gateway) + "sprinkler/registry";
+	} else {
 		return String(api_gateway) + "/sprinkler/registry";
 	}
 }
 
 
 bool OGApiHandler::registerNodeTag(
-		char* nodeTag,
-		char* api_gateway,
-		char* basic_auth,
-		char* basic_pwd){
+		char *nodeTag,
+		char *api_gateway,
+		char *basic_auth,
+		char *basic_pwd) {
 
 	StaticJsonDocument<200> doc;
 
@@ -33,7 +32,7 @@ bool OGApiHandler::registerNodeTag(
 	// add header content type + auth if defined
 	http.addHeader("Content-Type", "application/json");
 
-	if ((String(basic_auth).length() > 0) && (String(basic_pwd).length() > 0 ) ){
+	if ((String(basic_auth).length() > 0) && (String(basic_pwd).length() > 0)) {
 		String auth = base64::encode(String(basic_auth) + ":" + String(basic_pwd));
 		http.addHeader("Authorization", "Basic " + auth);
 	}
@@ -44,29 +43,27 @@ bool OGApiHandler::registerNodeTag(
 	Serial.print("HTTP response code: ");
 	Serial.println(httpResponseCode);
 
-	if(httpResponseCode>0){
+	if (httpResponseCode > 0) {
 		String response = http.getString();
 		// parse string to json object
-		int str_len = response.length()+1;
+		int str_len = response.length() + 1;
 		char char_response[str_len];
 		response.toCharArray(char_response, str_len);
 		Serial.println(char_response);
 
-		DeserializationError error = deserializeJson(doc, char_response );
+		DeserializationError error = deserializeJson(doc, char_response);
 		if (error) {
 			Serial.print(F("deserializeJson() failed: "));
 			Serial.println(error.f_str());
-		}
-		else {
+		} else {
 			bool acknowledge = doc["acknowledge"];
 			return acknowledge;
 		}
 
-	}
-	else {
+	} else {
 		Serial.print("Error on sending POST: ");
 		Serial.println(httpResponseCode);
-		return false ;
+		return false;
 	}
 	http.end();
 	return false;
