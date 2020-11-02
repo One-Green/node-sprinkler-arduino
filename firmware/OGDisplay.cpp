@@ -15,60 +15,60 @@
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
 
-void DisplayLib::initR(){
+void DisplayLib::initR() {
 
 	tft.initR(INITR_BLACKTAB);
 	tft.fillScreen(ST7735_BLACK);
 	delay(500);
 	// large block of text
 	tft.fillScreen(ST7735_BLACK);
-	drawtext("Screen initialised",ST7735_WHITE);
+	drawtext("Screen initialised", ST7735_WHITE);
 
 }
 
 
-void DisplayLib::initWifi(){
+void DisplayLib::initWifi() {
 	drawtext("Connecting to WIFI", ST7735_WHITE);
 }
 
 
-void DisplayLib::connectedWifi(){
+void DisplayLib::connectedWifi() {
 	drawtext("Connected to WIFI", ST7735_WHITE);
 }
 
 
-void DisplayLib::printHeader(char *wifiSsid, IPAddress ip, char *nodeType, char *nodeTag){
+void DisplayLib::printHeader(char *wifiSsid, IPAddress ip, char *nodeType, char *nodeTag) {
 	tft.fillRect(0, 0, 128, 50, ST7735_WHITE);
 	tft.fillRect(0, 50, 128, 160, ST7735_GREEN);
 	tft.setTextColor(ST7735_BLACK);
 
 	// print wifi SSID
-	tft.setCursor(2,2);
+	tft.setCursor(2, 2);
 	tft.print("WIFI: ");
-	tft.setCursor(35,2);
+	tft.setCursor(35, 2);
 	String ssid = String(wifiSsid);
 	if (ssid.length() > 15) {
-		ssid = ssid.substring(0,12) + "..." ;
+		ssid = ssid.substring(0, 12) + "...";
 	}
 	tft.print(ssid);
 
 	// print IP
-	tft.setCursor(2,10);
+	tft.setCursor(2, 10);
 	tft.print("IP: " + ip2Str(ip));
 
 	// print node type
-	tft.setCursor(2,20);
+	tft.setCursor(2, 20);
 	tft.print("Node Type: ");
 	tft.print(nodeType);
 
 	// print node tag
-	tft.setCursor(2,30);
+	tft.setCursor(2, 30);
 	tft.print("Node Tag: ");
 	tft.print(nodeTag);
 }
 
 
-void DisplayLib::printTemplate(){
+void DisplayLib::printTemplate() {
 	tft.print("");
 }
 
@@ -82,7 +82,7 @@ void DisplayLib::drawtext(char *text, uint16_t color) {
 }
 
 
-void DisplayLib::printRegistryError(){
+void DisplayLib::printRegistryError() {
 	String message = "This tag is already in database, change it or delete it by using API gateway";
 	tft.fillRect(0, 50, 128, 160, ST7735_RED);
 	tft.setCursor(0, 50);
@@ -95,11 +95,11 @@ void DisplayLib::printRegistryError(){
 }
 
 
-String DisplayLib::ip2Str(IPAddress ip){
+String DisplayLib::ip2Str(IPAddress ip) {
 	// took from https://gist.github.com/loosak/76019faaefd5409fca67
-	String s="";
-	for (int i=0; i<4; i++) {
-		s += i  ? "." + String(ip[i]) : String(ip[i]);
+	String s = "";
+	for (int i = 0; i < 4; i++) {
+		s += i ? "." + String(ip[i]) : String(ip[i]);
 	}
 	return s;
 }
