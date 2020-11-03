@@ -120,15 +120,17 @@ void loop() {
 		Serial.println("Soil moisture ADC=" + String(rawSoilMoisture) + "/" + "LEVEL=" + String(soilMoisture));
 		Serial.print("Line protocol=");
 		String line_proto = io_handler.generateInfluxLineProtocol();
-		int line_proto_len = line_proto.length();
-		char line_proto_char[line_proto_len + 1] ;
-		line_proto.toCharArray(line_proto_char,line_proto_len);
 		Serial.println(line_proto);
-		client.publish("esp32/temperature", line_proto_char);
-		//client.publish(SENSOR_TOPIC, line_proto.c_str());
+		// convert string to char and publish to mqtt
+		int line_proto_len = line_proto.length() +1;
+		char line_proto_char[line_proto_len];
+		line_proto.toCharArray(line_proto_char, line_proto_len);
+		client.publish(SENSOR_TOPIC, line_proto_char);
 
 	} else {
-		Serial.println("Not registered, tag is already in database, remove it first");
+		Serial.println("Not registered, "
+		               "tag is already in database, "
+		               "to bypass change variable  CHECK_NODE_TAG_DUPLICATE to false");
 		displayLib.printRegistryError();
 	}
 
