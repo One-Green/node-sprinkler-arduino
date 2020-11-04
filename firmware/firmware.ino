@@ -47,7 +47,7 @@ int SOIL_MOISTURE_ADC_MIN = 1390;
 bool registered = false;
 
 // Actuator
-bool last_water_valve_signal = false ;
+bool last_water_valve_signal = false;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -67,7 +67,7 @@ void setup(void) {
 	Serial.println("\n");
 
 	displayLib.initWifi();
-	Serial.print("Connecting to wifi ");
+	Serial.print("[WIFI] Connecting to ");
 	Serial.print(WIFI_SSID);
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
@@ -79,8 +79,8 @@ void setup(void) {
 
 	Serial.println("\n");
 	displayLib.connectedWifi();
-	Serial.println("Connected ");
-	Serial.print("IP address: ");
+	Serial.println("[WIFI] Connected ");
+	Serial.print("[WIFI] IP address: ");
 	Serial.println(WiFi.localIP());
 
 	displayLib.printHeader(WIFI_SSID, WiFi.localIP(), NODE_TYPE, NODE_TAG);
@@ -117,8 +117,8 @@ void loop() {
 		int soilMoisture = io_handler.getMoistureLevel(
 				SOIL_MOISTURE_ADC_MIN, SOIL_MOISTURE_ADC_MAX,
 				100, 0);
-		Serial.println("Soil moisture ADC=" + String(rawSoilMoisture) + "/" + "LEVEL=" + String(soilMoisture));
-		Serial.print("Line protocol=");
+		Serial.println("[I/O] Soil moisture ADC=" + String(rawSoilMoisture) + "/" + "LEVEL=" + String(soilMoisture));
+		Serial.print("[MQTT] Sending >> on topic= " + String(SENSOR_TOPIC) + " Influxdb line protocol message: ");
 		String line_proto = io_handler.generateInfluxLineProtocol();
 		Serial.println(line_proto);
 		// convert string to char and publish to mqtt
@@ -141,7 +141,7 @@ void loop() {
 void reconnect_mqtt() {
 	// Loop until we're reconnected
 	while (!client.connected()) {
-		Serial.print("Attempting MQTT connection... with client name = ");
+		Serial.print("[MQTT] Attempting connection... with client name = ");
 		String client_name = String(NODE_TYPE) + "-" + String(NODE_TYPE);
 		int clt_len = client_name.length() + 1;
 		char clt_name_char[clt_len];
@@ -150,13 +150,13 @@ void reconnect_mqtt() {
 
 		// Attempt to connect
 		if (client.connect(clt_name_char)) {
-			Serial.println("connected");
+			Serial.println("[MQTT] Client connected");
 			// Subscribe
 			client.subscribe(SENSOR_CONTROLLER);
 		} else {
-			Serial.print("failed, rc=");
+			Serial.print("[MQTT] failed, rc=");
 			Serial.print(client.state());
-			Serial.println(" try again in 5 seconds");
+			Serial.println("[MQTT] try again in 5 seconds");
 			// Wait 5 seconds before retrying
 			delay(5000);
 		}
@@ -165,9 +165,9 @@ void reconnect_mqtt() {
 
 
 void mqttCallback(char *topic, byte *message, unsigned int length) {
-	Serial.print("Message arrived on topic: ");
+	Serial.print("[MQTT] Receiving << on topic: ");
 	Serial.print(topic);
-	Serial.print(". Message: ");
+	Serial.print(". JSON message: ");
 	String messageTemp;
 
 	for (int i = 0; i < length; i++) {
@@ -184,16 +184,15 @@ void mqttCallback(char *topic, byte *message, unsigned int length) {
 	bool water_valve_signal = obj[String("water_valve_signal")];
 
 	if (tag == NODE_TAG) {
-		if (water_valve_signal != last_water_valve_signal){
-				last_water_valve_signal = water_valve_signal;
-				if (water_valve_signal){
-					io_handler.openWaterValve();
-					Serial.println("Water valve is OPENED");
-				}
-				else{
-					io_handler.closeWaterValve();
-					Serial.println("Water valve is CLOSED");
-				}
+		if (water_valve_signal != last_water_valve_signal) {
+			last_water_valve_signal = water_valve_signal;
+			if (water_valve_signal) {
+				io_handler.openWaterValve();
+				Serial.println("[I/O] Water valve has been OPENED");
+			} else {
+				io_handler.closeWaterValve();
+				Serial.println("[I/O] Water valve has been CLOSED");
+			}
 		}
 	}
 	// ---- to print parsed json object
