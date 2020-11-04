@@ -83,7 +83,9 @@ void DisplayLib::drawtext(char *text, uint16_t color) {
 
 
 void DisplayLib::printRegistryError() {
-	String message = "This tag is already in database, change it or delete it by using API gateway";
+	String message = "Not registered, "
+	                 "tag is already in database, "
+	                 "to bypass change variable  CHECK_NODE_TAG_DUPLICATE to false";
 	tft.fillRect(0, 50, 128, 160, ST7735_RED);
 	tft.setCursor(0, 50);
 	tft.print(message);
