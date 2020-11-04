@@ -81,9 +81,7 @@ void setup(void) {
 
 	displayLib.printHeader(WIFI_SSID, WiFi.localIP(), NODE_TYPE, NODE_TAG);
 
-
 	if (WiFi.status() == WL_CONNECTED) {
-
 		if (CHECK_NODE_TAG_DUPLICATE) {
 			registered = apiHandler.registerNodeTag(
 					NODE_TAG,
@@ -91,16 +89,14 @@ void setup(void) {
 					API_GATEWAY_BASIC_AUTH_USER,
 					API_GATEWAY_BASIC_AUTH_PASSWORD
 			);
-
 		} else {
 			registered = true;
 		}
-
 	}
 
 	// MQTT connexion
 	client.setServer(MQTT_SERVER, MQTT_PORT);
-	// client.setCallback(mqttCallback);
+	client.setCallback(mqttCallback);
 
 }
 
@@ -122,7 +118,7 @@ void loop() {
 		String line_proto = io_handler.generateInfluxLineProtocol();
 		Serial.println(line_proto);
 		// convert string to char and publish to mqtt
-		int line_proto_len = line_proto.length() +1;
+		int line_proto_len = line_proto.length() + 1;
 		char line_proto_char[line_proto_len];
 		line_proto.toCharArray(line_proto_char, line_proto_len);
 		client.publish(SENSOR_TOPIC, line_proto_char);
@@ -141,12 +137,18 @@ void loop() {
 void reconnect_mqtt() {
 	// Loop until we're reconnected
 	while (!client.connected()) {
-		Serial.print("Attempting MQTT connection...");
+		Serial.print("Attempting MQTT connection... with client name = ");
+		String client_name = String(NODE_TYPE) + "-" + String(NODE_TYPE);
+		int clt_len = client_name.length() + 1;
+		char clt_name_char[clt_len];
+		client_name.toCharArray(clt_name_char, clt_len);
+		Serial.println(clt_name_char);
+
 		// Attempt to connect
-		if (client.connect("ESP32")) {
+		if (client.connect(clt_name_char)) {
 			Serial.println("connected");
 			// Subscribe
-			client.subscribe("esp32/output");
+			client.subscribe(SENSOR_CONTROLLER);
 		} else {
 			Serial.print("failed, rc=");
 			Serial.print(client.state());
