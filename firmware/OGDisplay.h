@@ -31,7 +31,13 @@ public:
 
 	void printTemplate();
 
+	void updateDisplay(float moistureLevelADC, float moistureLevel,
+					float configMin, float configMax ,
+					bool water_valve_signal);
+
 	void printRegistryError();
+
+	void uptime();
 
 
 
