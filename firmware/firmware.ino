@@ -84,6 +84,7 @@ void setup(void) {
 	Serial.println(WiFi.localIP());
 
 	displayLib.printHeader(WIFI_SSID, WiFi.localIP(), NODE_TYPE, NODE_TAG);
+	displayLib.printTemplate();
 
 	if (WiFi.status() == WL_CONNECTED) {
 		if (CHECK_NODE_TAG_DUPLICATE) {
@@ -127,6 +128,10 @@ void loop() {
 		line_proto.toCharArray(line_proto_char, line_proto_len);
 		client.publish(SENSOR_TOPIC, line_proto_char);
 
+		displayLib.updateDisplay(rawSoilMoisture, soilMoisture,
+				30, 70,
+				last_water_valve_signal);
+
 	} else {
 		Serial.println("Not registered, "
 		               "tag is already in database, "
@@ -152,8 +157,7 @@ void reconnect_mqtt() {
 		if (client.connect(clt_name_char)) {
 			Serial.println("[MQTT] Client connected");
 			// Subscribe
-			client.subscribe(SENSOR_CONTROLLER);
-		} else {
+			client.subscribe(SENSOR_CONTROLLER);		} else {
 			Serial.print("[MQTT] failed, rc=");
 			Serial.print(client.state());
 			Serial.println("[MQTT] try again in 5 seconds");
@@ -180,6 +184,8 @@ void mqttCallback(char *topic, byte *message, unsigned int length) {
 	deserializeJson(doc, messageTemp);
 	JsonObject obj = doc.as<JsonObject>();
 
+	// TODO : One Green master / sprinklers controller need to be upgraded
+	// TODO: must include user MIN/MAX parameter to display on screen
 	String tag = obj[String("tag")];
 	bool water_valve_signal = obj[String("water_valve_signal")];
 
